@@ -1,16 +1,6 @@
 #COMPASS Z and S scores
 require("dplyr")
-
-#mean function when rest of data are assumed to be zero
-sparse_mean <- function(vec, n = length(vec)) {
-  return(sum(vec) / n)
-}
-
-#sd function when rest of data are assumed to be zero
-sparse_sd <- function(vec, n = length(vec)) {
-  mu <- sum(vec) / n
-  return(sum((vec - mu)^2) / (n - 1))
-}
+source("init_fns.R")
 
 #COMPASS Z score
 #takes data input and returns data with scores as new column
