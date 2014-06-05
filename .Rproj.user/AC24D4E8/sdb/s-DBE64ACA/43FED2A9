@@ -1,0 +1,17 @@
+{
+    "contents" : "#COMPASS Z and S scores\nrequire(\"dplyr\")\n\n#mean function when rest of data are assumed to be zero\nsparse_mean <- function(vec, n = length(vec)) {\n  return(sum(vec) / n)\n}\n\n#sd function when rest of data are assumed to be zero\nsparse_sd <- function(vec, n = length(vec)) {\n  mu <- sum(vec) / n\n  return(sum((vec - mu)^2) / (n - 1))\n}\n\n#COMPASS Z score\n#takes data input and returns data with scores as new column\ncompass_z <- function(data, prey_col, bait_col) {\n  n_exp <- length(unique(data[[bait_col]]))\n  out <- tbl_df(data) %.%\n    rename_col(prey_col, \"Prey\") %.% #load from mink_dist.r\n    rename_col(bait_col, \"ExpNo\") %.%\n    group_by(Prey) %.%\n    mutate(z_score=(Count-sparse_mean(Count,n_exp))/sparse_sd(Count,n_exp)) %.%\n    ungoup()\n  return(out)\n}\n\n#COMPASS S score\n#takes data input and returns data with scores as new column\ncompass_s <- function(data, prey_col, bait_col) {\n  n_exp <- length(unique(data[[bait_col]]))\n  out <- tbl_df(data) %.%\n    rename_col(prey_col, \"Prey\") %.% #load from mink_dist.r\n    rename_col(bait_col, \"ExpNo\") %.%\n    group_by(Prey) %.%\n    mutate(s_score = sqrt(n_exp * Count / length(Count))) %.%\n    ungoup()\n  return(out)\n}",
+    "created" : 1401987673584.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3152721816",
+    "id" : "43FED2A9",
+    "lastKnownWriteTime" : 1401988774,
+    "path" : "~/Dropbox/School/Research/protein_scoring/COMPASS.R",
+    "project_path" : "COMPASS.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
