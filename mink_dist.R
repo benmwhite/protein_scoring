@@ -24,3 +24,14 @@ compute_dist <- function(data, prey_col, count_col, p) {
   out$D_ik[out$D_ik == 0] <- NA
   return(out)
 }
+
+#function for returning weighted mean differences
+#input data set should be output data set from compute_dist()
+
+M_diff <- function(dists) {
+  out <- dists %.%
+    group_by(Prey) %.%
+    summarise(M = mean((D_i - D_ik) / sd(D_ik)))
+  out$M[is.infinite(out$M)] <- NA
+  return(out)
+}
