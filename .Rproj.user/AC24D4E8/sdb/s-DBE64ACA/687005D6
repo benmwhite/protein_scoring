@@ -1,0 +1,17 @@
+{
+    "contents" : "#scratch work for scoring\n#setwd(\"~/Dropbox/School/Research/protein_scoring\")\nsource(\"init_fns.R\")\nsource(\"mink_dist.R\")\n\n#loading data, removing 1 and 2 counts, normalizing by length\ndat <- tbl_df(read.csv(\"~/Dropbox/School/Research/Minkowski/Chen-all.csv\",\n              header = TRUE, stringsAsFactors = FALSE)) %.%\n  filter(Count > 2) %.%\n  apply_col(\"Length\", function(x) {x[is.na(x)] <- 300; return(x)}) %.%\n  mutate(normCount = Count/Length)\n\ndists <- compute_dist(dat, \"Prey\", \"normCount\", 0.25)\nqplot(log(D_i), data = dists)\n\n#looking at prey specificity\nspec <- group_by(dat, Prey) %.%\n  summarise(occurrences = length(Prey), \n            Length = max(Length),\n            medTSC = median(Count),\n            meanTSC = mean(Count)) %.%\n  ungroup()\nqplot(Length, occurrences, data = spec, geom = \"bin2d\")\nqplot(log(occurrences), data = spec)\nqplot(log(medTSC), log(meanTSC), data = spec)\n\n#looking at total spectral counts accross baits\nbait_sc <- group_by(dat, ExpNo) %.%\n  summarise(TSC = sum(Count), meanTSC = mean(Count)) %.%\n  ungroup()\nqplot(TSC, meanTSC, data = bait_sc, main = \"Bait TSC\")\n",
+    "created" : 1402070486016.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3024563986",
+    "id" : "687005D6",
+    "lastKnownWriteTime" : 1402077067,
+    "path" : "~/Dropbox/School/Research/protein_scoring/scratch.R",
+    "project_path" : "scratch.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
