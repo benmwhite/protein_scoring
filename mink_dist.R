@@ -36,25 +36,27 @@ M_diff <- function(dists) {
   return(out)
 }
 
+#OLD
 #function for getting mean modified coefficient of variation of the differences
-MCV <- function(dists) {
-  out <- dists %.%
-    group_by(Prey) %.%
-    summarise(M = mean(sd(D_ik) / mean(D_ik)))
-  out$M[is.infinite(out$M)] <- NA
-  return(out)
-}
+#MCV <- function(dists) {
+#  out <- dists %.%
+#    group_by(Prey) %.%
+#    summarise(M = mean(sd(D_ik) / mean(D_ik)))
+#  out$M[is.infinite(out$M)] <- NA
+#  return(out)
+#}
 
-#function for iterating over minkowski parameter p, returning mean
-#output from function (such as M_diff)
-diffs_pseq <- function(data, pseq, prey_col, count_col, f) {
+#function for producing plot of M_i's over minkowski parameter p, returning mean
+#output from M_diff
+pplot_Mdiff <- function(data, pseq, prey_col, count_col, ...) {
   extract_diffs <- function(p) {
     tempdat <- compute_dist(data, prey_col, count_col, p)
-    out <- c(MeanDiff = mean(f(tempdat)$M, na.rm = TRUE),
-             MedDiff = median(f(tempdat)$M, na.rm = TRUE),
-             p = p)
+    out <- c(MeanDiff = mean(M_diff(tempdat)$M, na.rm = TRUE), p = p)
     return(out)
   }
-  out <- t(sapply(pseq, extract_diffs))
-  return(tbl_df(data.frame(out)))
+  plot_data <- sapply(pseq, extract_diffs) %.% 
+    t() %.% 
+    data.frame() %.% 
+    tbl_df()
+  qplot(p, MeanDiff, data = plot_data, geom = c("point", "line"), ...)
 }
