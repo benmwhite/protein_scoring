@@ -10,7 +10,7 @@ source("init_fns.R")
 #nearest integer. Similarly the default TSC is the average TSC accross
 #all the original experiments rounded up to the nearest integer
 
-generate_null <- function(data, bait_col, prey_col, count_col,
+generate_null <- function(data, bait_col, prey_col, count_col, exp_no,
                           nprey = NULL, TSC = NULL) {
   data <- data %.%
     rename_col(bait_col, "Bait") %.%
@@ -43,7 +43,19 @@ generate_null <- function(data, bait_col, prey_col, count_col,
                              prob = subset_preycounts$TSC)
   }
   out <- tbl_df(data.frame(table(new_preys))) %.%
-                  rename_col("new_preys", "Prey") %.%
-                  rename_col("Freq", "Count")
+    rename_col("new_preys", "Prey") %.%
+    rename_col("Freq", "Count") %.%
+    mutate(ExpNo = exp_no)
+  return(out)
+}
+
+#function to produce single data frame for multiple runs
+sim_data <- function(data, nruns, bait_col, prey_col, count_col,
+                     nprey = NULL, TSC = NULL) {
+  out <- tbl_df(data.frame())
+  for (i in 1:nruns) {
+    out <- rbind(out, generate_null(data, bait_col, prey_col, 
+                                    count_col, exp_no = i, nprey, TSC))
+  }
   return(out)
 }
