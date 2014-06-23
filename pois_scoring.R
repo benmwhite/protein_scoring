@@ -1,7 +1,7 @@
 #Poisson scoring
 source("init_fns.R")
 source("mink_dist.R")
-require("dplyr")
+library(dplyr)
 
 #function does not compute distances, use compute_dist first
 #output is data frame with scores added as new column

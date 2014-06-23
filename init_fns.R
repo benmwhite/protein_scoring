@@ -1,5 +1,5 @@
 #initial functions
-require("ggplot2")
+library("ggplot2")
 
 rename_col <- function(data, oldname, newname) {
   names(data)[names(data) == oldname] <- newname
