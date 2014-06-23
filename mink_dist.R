@@ -18,10 +18,10 @@ compute_dist <- function(data, prey_col, count_col, p) {
     rename_col(count_col, "Count") %.%
     group_by(Prey) %.% 
     mutate(D_i = sum(Count^p)^(1/p), 
-          D_ik = (sum(Count^p) - Count^p)^(1/p)) %.%
+          D_ij = (sum(Count^p) - Count^p)^(1/p)) %.%
     ungroup()
-  out$D_ik[is.infinite(out$D_ik)] <- NA
-  out$D_ik[out$D_ik == 0] <- NA
+  out$D_ij[is.infinite(out$D_ij)] <- NA
+  out$D_ij[out$D_ij == 0] <- NA
   return(out)
 }
 
@@ -31,7 +31,7 @@ compute_dist <- function(data, prey_col, count_col, p) {
 M_diff <- function(dists) {
   out <- dists %.%
     group_by(Prey) %.%
-    summarise(M = mean((D_i - D_ik) / sd(D_ik)))
+    summarise(M = mean((D_i - D_ij) / sd(D_ij)))
   out$M[is.infinite(out$M)] <- NA
   return(out)
 }
@@ -59,4 +59,25 @@ pplot_Mdiff <- function(data, pseq, prey_col, count_col, ...) {
     data.frame() %.% 
     tbl_df()
   qplot(p, MeanDiff, data = plot_data, geom = c("point", "line"), ...)
+}
+
+####Distance-based scoring methods####
+DAll_scores <- function(data, prey_col, dij_col) {
+  out <- tbl_df(data) %.%
+    rename_col(prey_col, "Prey") %.%
+    rename_col(dij_col, "D_ij") %.%
+    group_by(Prey) %.%
+    mutate(D_all = D_ij - mean(D_ij)) %.%
+    ungroup()
+  return(out)
+}
+
+Dratio_scores <- function(data, prey_col, dij_col) {
+  out <- tbl_df(data) %.%
+    rename_col(prey_col, "Prey") %.%
+    rename_col(dij_col, "D_ij") %.%
+    group_by(Prey) %.%
+    mutate(D_ratio = (D_ij - mean(D_ij)) / mean(D_ij)) %.%
+    ungroup()
+  return(out)
 }
