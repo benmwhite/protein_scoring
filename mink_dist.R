@@ -81,3 +81,16 @@ Dratio_scores <- function(data, prey_col, dij_col) {
     ungroup()
   return(out)
 }
+
+lambda_scores <- function(data, bait_col, prey_col, dist_col, count_col,
+                          length_col, tsc_col) {
+  out <- tbl_df(data) %.%
+    rename_col(prey_col, "Prey") %.%
+    rename_col(bait_col, "Bait") %.%
+    rename_col(dist_col, "Dist") %.%
+    rename_col(length_col, "Length") %.%
+    rename_col(count_col, "Count") %.%
+    rename_col(tsc_col, "TSC") %.%
+    mutate(lambda_score = log1p(Count / (Length * TSC * Dist)))
+  return(out)
+}
